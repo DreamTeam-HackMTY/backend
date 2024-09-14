@@ -6,7 +6,11 @@
     "dev": "node ace serve --watch",
     "build": "node ace build --production",
     "start": "node server.js",
-    "test": "node ace test"
+    "test": "node ace test",
+    "alters:run": "node ace migration:run --connection=alters --force",
+    "alters:make": "node ace make:migration alters --connection=alters",
+    "pg:ref": "node ace migration:fresh --seed --force",
+    "pg:run": "node ace migration:run --force"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^5.9.6",

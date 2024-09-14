@@ -1,5 +1,17 @@
 {
   "commands": {
+    "builder": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/Builder",
+      "commandName": "builder",
+      "description": "Custom command to compile the application from Typescript to Javascript.",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",
