@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { ValidatorException } from 'App/Exceptions/ValidatorException'
 import Case from 'App/Models/Epidemic/Case'
+import State from 'App/Models/Epidemic/State'
 import CreateCaseValidator from 'App/Validators/Epidemics/Cases/CreateCaseValidator'
 
 export default class CasesController {
@@ -33,6 +34,47 @@ export default class CasesController {
       status: 'Éxito',
       message: 'Caso encontrado',
       data: _case,
+    })
+  }
+
+  public async showStateByDisease({ params, response }: HttpContextContract) {
+    // Consulta para agrupar y sumar las cantidades
+    const cases = await Database
+      .from('cases')
+      .where('disease_id', params.diseaseId)
+      .select('state_id')
+      .sum('quantity as total_quantity')
+      .groupBy('state_id')
+      .orderBy('total_quantity', 'desc')
+
+    if (cases.length === 0) {
+      return response.notFound({
+        status: 'Error',
+        message: 'Casos no encontrados',
+        data: null,
+      })
+    }
+
+    // Obtener los nombres de los estados
+    const stateIds = cases.map((_case) => _case.state_id)
+    const states = await State.query().whereIn('id', stateIds)
+
+    // Formatear la respuesta
+    const formattedCases = cases.map((_case) => {
+      const state = states.find((state) => state.id === _case.state_id)
+      return {
+        state: {
+          id: _case.state_id,
+          name: state ? state.name : 'Desconocido',
+        },
+        total_quantity: _case.total_quantity,
+      }
+    })
+
+    return response.ok({
+      status: 'Éxito',
+      message: 'Casos encontrados',
+      data: formattedCases,
     })
   }
 
