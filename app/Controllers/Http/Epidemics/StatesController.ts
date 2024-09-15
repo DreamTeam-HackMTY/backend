@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import State from 'App/Models/Epidemic/State'
 
 export default class StatesController {
-  private states = State.query().orderBy('id', 'desc')
+  private states = State.query().where({ active: true }).orderBy('id', 'desc')
 
   public async index({ request, response }: HttpContextContract) {
     const { disease_id } = request.qs()

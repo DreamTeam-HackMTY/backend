@@ -6,7 +6,10 @@ import Diseases from 'App/Models/Epidemic/Disease'
 import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class DiseasesController {
-  private diseases = Diseases.query().preload('cases').orderBy('id', 'desc')
+  private diseases = Diseases.query()
+    .where({ active: true })
+    .preload('cases')
+    .orderBy('id', 'desc')
 
   public async index({ response }: HttpContextContract) {
     const diseasesList = await this.diseases

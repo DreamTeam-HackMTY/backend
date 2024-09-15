@@ -6,6 +6,7 @@ import Case from 'App/Models/Epidemic/Case'
 
 export default class CasesController {
   private cases = Case.query()
+    .where({ active: true })
     .preload('disease')
     .preload('state')
     .orderBy('created_at', 'desc')

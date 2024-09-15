@@ -10,7 +10,10 @@ import UpdateUserValidator from 'App/Validators/Users/UpdateUserValidator'
 import Sanitizer from 'App/Services/Sanitizer'
 
 export default class UsersController {
-  private users = User.query().preload('roles').orderBy('id', 'desc')
+  private users = User.query()
+    .where({ active: true })
+    .preload('roles')
+    .orderBy('id', 'desc')
 
   public async index({ response }: HttpContextContract) {
     return response.ok({

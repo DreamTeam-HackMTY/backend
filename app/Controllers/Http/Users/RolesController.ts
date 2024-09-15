@@ -3,7 +3,9 @@ import Roles from 'App/Models/Users/Role'
 
 export default class RolesController {
   public async index({ response }: HttpContextContract) {
-    const roles = await Roles.all()
+    const roles = await Roles.query()
+      .where({ active: true })
+      .orderBy('id', 'desc')
 
     return response.ok({
       status: 'Éxito',
@@ -15,7 +17,7 @@ export default class RolesController {
   public async show({ params, response }: HttpContextContract) {
     const role = await Roles.find(params.id)
 
-    if (!role) {
+    if (!role || !role.active) {
       return response.notFound({
         status: 'Error',
         message: 'Rol no encontrado',
