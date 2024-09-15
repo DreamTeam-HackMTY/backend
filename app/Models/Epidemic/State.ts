@@ -15,7 +15,8 @@ export default class State extends BaseModel {
 
   @hasMany(() => Case, {
     localKey: 'id',
-    foreignKey: 'case_id',
+    foreignKey: 'state_id',
+    onQuery: (query) => query.preload('disease'),
   })
   public cases: HasMany<typeof Case>
 }
