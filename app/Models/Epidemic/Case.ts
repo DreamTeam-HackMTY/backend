@@ -10,14 +10,21 @@ export default class Case extends BaseModel {
   })
   public id: number
 
-  @column()
+  @column({
+    serializeAs: null,
+  })
   public disease_id: number
 
-  @column()
+  @column({
+    serializeAs: null,
+  })
   public state_id: number
 
   @column()
   public quantity: number
+
+  @column()
+  public is_deaths: boolean
 
   @column()
   public active: boolean

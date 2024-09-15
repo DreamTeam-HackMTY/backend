@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node ace serve --watch",
-    "build": "node ace build --production",
+    "build": "node ace builder",
     "start": "node server.js",
     "test": "node ace test",
     "alters:run": "node ace migration:run --connection=alters --force",

@@ -6,18 +6,18 @@ import Diseases from 'App/Models/Epidemic/Disease'
 import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class DiseasesController {
-  public async index({ response }: HttpContextContract) {
-    const diseases = await Diseases.all()
+  private diseases = Diseases.query().preload('cases').orderBy('id', 'desc')
 
+  public async index({ response }: HttpContextContract) {
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedades obtenidas',
-      data: diseases,
+      data: await this.diseases,
     })
   }
 
   public async show({ params, response }: HttpContextContract) {
-    const disease = await Diseases.find(params.id)
+    const disease = await this.diseases.where('id', params.id).first()
 
     if (!disease) {
       return response.notFound({
