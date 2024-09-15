@@ -9,10 +9,28 @@ export default class DiseasesController {
   private diseases = Diseases.query().preload('cases').orderBy('id', 'desc')
 
   public async index({ response }: HttpContextContract) {
+    const diseasesList = await this.diseases
+
+    const result = diseasesList
+      .map((disease) => {
+        const totalCases = disease.cases.length
+        const deaths = disease.cases.filter((c) => c.is_deaths).length
+
+        return {
+          ...disease.toJSON(),
+          total_cases: totalCases,
+          deaths: deaths,
+        }
+      })
+      .map((disease: any) => {
+        delete disease.cases
+        return disease
+      })
+
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedades obtenidas',
-      data: await this.diseases,
+      data: result,
     })
   }
 
@@ -27,10 +45,19 @@ export default class DiseasesController {
       })
     }
 
+    const totalCases = disease.cases.length
+    const deaths = disease.cases.filter((c) => c.is_deaths).length
+
+    const { cases, ...disease_data } = disease.toJSON()
+
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedad obtenida',
-      data: disease,
+      data: {
+        ...disease_data,
+        total_cases: totalCases,
+        deaths: deaths,
+      },
     })
   }
 
