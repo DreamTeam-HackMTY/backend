@@ -19,6 +19,7 @@ export default class extends BaseSchema {
         .inTable('states')
         .onDelete('CASCADE')
       table.integer('quantity').notNullable()
+      table.boolean('is_deaths').defaultTo(false).notNullable()
       table.boolean('active').defaultTo(true).notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

@@ -18,11 +18,6 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('roles')
         .onDelete('CASCADE')
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
     })
   }
 
