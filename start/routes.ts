@@ -19,6 +19,8 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import 'App/Routes/Auth'
+import 'App/Routes/Users'
 
 Route.get('/', ({ response }) => {
   return response.ok({
