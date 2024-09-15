@@ -2,8 +2,8 @@ import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
 import State from 'App/Models/Epidemic/State'
 
 export default class StateSeeder extends BaseSeeder {
-  public async run () {
-    const states = [
+  public async run() {
+    await State.createMany([
       { name: 'Aguascalientes' },
       { name: 'Baja California' },
       { name: 'Baja California Sur' },
@@ -36,8 +36,6 @@ export default class StateSeeder extends BaseSeeder {
       { name: 'Veracruz' },
       { name: 'Yucatán' },
       { name: 'Zacatecas' },
-    ]
-
-    await State.createMany(states)
+    ])
   }
 }

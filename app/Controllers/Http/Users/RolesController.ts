@@ -1,16 +1,16 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
-import Roles from 'App/Models/Users/Role';
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Roles from 'App/Models/Users/Role'
 
 export default class RolesController {
   public async index({ response }: HttpContextContract) {
+    const roles = await Roles.all()
+
     return response.ok({
       status: 'Éxito',
       message: 'Roles obtenidos',
-      data: await Roles.all(),
+      data: roles,
     })
   }
-
-  public async store({}: HttpContextContract) {}
 
   public async show({ params, response }: HttpContextContract) {
     const role = await Roles.find(params.id)
@@ -26,11 +26,7 @@ export default class RolesController {
     return response.ok({
       status: 'Éxito',
       message: 'Rol obtenido',
-      data: await role,
+      data: role,
     })
   }
-
-  public async update({}: HttpContextContract) {}
-
-  public async destroy({}: HttpContextContract) {}
 }

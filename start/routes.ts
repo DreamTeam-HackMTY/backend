@@ -21,7 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 import 'App/Routes/Auth'
 import 'App/Routes/Users'
-import 'App/Routes/Disease'
+import 'App/Routes/Epidemic'
 
 Route.get('/', ({ response }) => {
   return response.ok({

@@ -1,4 +1,4 @@
-import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import FormatDates from 'App/Services/FormatDates'
 import { DateTime } from 'luxon'
 

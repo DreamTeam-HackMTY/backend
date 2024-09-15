@@ -1,54 +1,18 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
-import Diseases from 'App/Models/Epidemic/Disease';
-import Database from '@ioc:Adonis/Lucid/Database'
-import CreateDiseaseValidator from 'App/Validators/Diseases/CreateDiseaseValidator'
+import CreateDiseaseValidator from 'App/Validators/Epidemics/Diseases/CreateDiseaseValidator'
+import UpdateDiseasesValidator from 'App/Validators/Epidemics/Diseases/UpdateDiseaseValidator'
 import { ValidatorException } from 'App/Exceptions/ValidatorException'
-import UpdateDiseasesValidator from 'App/Validators/Diseases/UpdateDiseaseValidator'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Diseases from 'App/Models/Epidemic/Disease'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class DiseasesController {
   public async index({ response }: HttpContextContract) {
-    const diseases = await Diseases.query().orderBy('id', 'desc')
+    const diseases = await Diseases.all()
 
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedades obtenidas',
       data: diseases,
-    })
-  }
-
-  public async store({ response, request }: HttpContextContract) {
-
-    try {
-      await request.validate(CreateDiseaseValidator)
-    } catch (error) {
-      return ValidatorException({ Err: error, Response: response })
-    }
-
-    const data = request.only(['name', 'description'])
-
-    const disease = new Diseases()
-    disease.name = data.name
-    disease.description = data.description
-    disease.active = true
-
-    const trx = await Database.transaction()
-
-    try {
-      await disease.useTransaction(trx).save()
-      await trx.commit()
-    } catch (error) {
-      await trx.rollback()
-      return response.internalServerError({
-        status: 'Error',
-        message: 'Error al guardar la enfermedad',
-        data: null,
-      })
-    }
-
-    return response.created({
-      status: 'Éxito',
-      message: 'Enfermedad creada',
-      data: disease,
     })
   }
 
@@ -66,19 +30,61 @@ export default class DiseasesController {
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedad obtenida',
-      data: await disease,
+      data: disease,
     })
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async store(ctx: HttpContextContract) {
+    const { request, response } = ctx
+
+    try {
+      await request.validate(CreateDiseaseValidator)
+    } catch (error) {
+      return ValidatorException({ Err: error, Response: response })
+    }
+
     const data = request.only(['name', 'description'])
-    const disease = await Diseases.find(params.id)
+
+    let disease: Diseases
+
+    const trx = await Database.transaction()
+
+    try {
+      disease = await Diseases.create({
+        ...data,
+        active: true,
+      })
+
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
+
+      return response.internalServerError({
+        status: 'Error',
+        message: 'Error al guardar la enfermedad',
+        data: null,
+      })
+    }
+
+    return response.created({
+      status: 'Éxito',
+      message: 'Enfermedad creada',
+      data: disease,
+    })
+  }
+
+  public async update(ctx: HttpContextContract) {
+    const { request, response, params } = ctx
 
     try {
       await request.validate(UpdateDiseasesValidator)
     } catch (error) {
       return ValidatorException({ Err: error, Response: response })
     }
+
+    const data = request.only(['name', 'description'])
+
+    const disease = await Diseases.find(params.id)
 
     if (!disease) {
       return response.notFound({
@@ -92,9 +98,11 @@ export default class DiseasesController {
 
     try {
       await disease.useTransaction(trx).merge(data).save()
+
       await trx.commit()
     } catch (error) {
       await trx.rollback()
+
       return response.internalServerError({
         status: 'Error',
         message: 'Error al actualizar la enfermedad',
@@ -107,7 +115,6 @@ export default class DiseasesController {
       message: 'Enfermedad actualizada',
       data: disease,
     })
-
   }
 
   public async destroy({ params, response }: HttpContextContract) {
@@ -124,10 +131,15 @@ export default class DiseasesController {
     const trx = await Database.transaction()
 
     try {
-      await disease.useTransaction(trx).merge({ active: !disease.active }).save()
+      await disease
+        .useTransaction(trx)
+        .merge({ active: !disease.active })
+        .save()
+
       await trx.commit()
     } catch (error) {
       await trx.rollback()
+
       return response.internalServerError({
         status: 'Error',
         message: 'Error al eliminar la enfermedad',
@@ -138,7 +150,7 @@ export default class DiseasesController {
     return response.ok({
       status: 'Éxito',
       message: 'Enfermedad eliminada',
-      data: disease
+      data: disease,
     })
   }
 }
