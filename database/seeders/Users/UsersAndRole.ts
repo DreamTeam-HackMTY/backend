@@ -5,7 +5,7 @@ import User from 'App/Models/Users/User'
 export default class extends BaseSeeder {
   public async run() {
     // Write your database queries inside the run method
-    const [DEV, ADMIN] = await Role.createMany([
+    const [DEV, ADMIN, ESPECIALISTA, INVITADO] = await Role.createMany([
       {
         name: 'DEV',
         active: true,
@@ -24,7 +24,7 @@ export default class extends BaseSeeder {
       },
     ])
 
-    const [dev, admin] = await User.createMany([
+    const [dev, admin, especialista, guest] = await User.createMany([
       {
         email: 'dev@example.com',
         username: 'dev',
@@ -37,9 +37,23 @@ export default class extends BaseSeeder {
         password: 'admin.pass',
         active: true,
       },
+      {
+        email: 'especialista@example.com',
+        username: 'especialista',
+        password: 'especialista.pass',
+        active: true,
+      },
+      {
+        email: 'guest@example.com',
+        username: 'guest',
+        password: 'guest.pass',
+        active: true,
+      },
     ])
 
     await dev.related('roles').attach([DEV.id])
     await admin.related('roles').attach([ADMIN.id])
+    await especialista.related('roles').attach([ESPECIALISTA.id])
+    await guest.related('roles').attach([INVITADO.id])
   }
 }
